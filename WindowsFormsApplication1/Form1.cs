@@ -11,20 +11,15 @@ using System.Windows.Forms;
 
 namespace WindowsFormsApplication1
 {
-   
     public partial class Form1 : Form
     {
-        
+        Bitmap mbit;
+       
+        Graphics k; 
         public Form1()
         {
             InitializeComponent();
         }
-
-        private void выходToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            Close();
-        }
-
         public struct adjacency_matrix
         {
             public int Nambers;
@@ -33,142 +28,100 @@ namespace WindowsFormsApplication1
         }
         public class Translate
         {
-            int i = 0,j=0; 
-          public  char[][] Matrix = new char[3][];
-          public char[][] TMatrix = new char[3][];
-           // char[,] AMatrix = new char[,];
-           // int[,] MatrixXY = new int[k, 2];
-            adjacency_matrix[] AMarix = new adjacency_matrix[3*5];
-            
 
-
-
-           public void StringToInt(string[] s)
-            {
-                
-                for (; j < s.Length; j++)
-                {
-                    Matrix[i][j] = Convert.ToChar(s[j]);
-                }
-                    i++;
-                    j = 0;
-            }
-           public void zap()
-           {
-                Matrix[0] = new char[] { 'a', 'd', 's', 'm', 't' };
-                Matrix[1] = new char[] { 'n', 't', 'l', 'u', 'o' };
-                Matrix[2] = new char[] { 's', 'm', 'q', 't', 'p' };
-                TMatrix = Matrix;
-               // string[] y;                                                                                                                               
-                 //y[0] =   Convert.ToString(Matrix[0]);
-               // listBox1.Items.Add(Matrix[0][1]);
-           }
-            public bool Razbor3(char a,int k)
-           {
-               for (int t = 0; t<=k;t++ ) {
-                   if (AMarix[t].Name == a) { return false; }
-               }
-               return true;
-           }
-           public void Razbor2(int t1, int t2)
-           {
-               int i2=0,j2=0;
-               bool trig=false;
-               for (int i1 = 0; i1 < Matrix.Length; i1++)
-               {
-                   for (int j1 = 0; j1 < Matrix[i1].Length; j1++)
-                   {
-                       if (Matrix[t1][t2] == Matrix[i1][j1] && (t1 != i1 && t2 != j1))
-                       {
-                           AMarix[i2].Nambers++;
-                       }
-                       
-
-                   }
-                   if (Razbor3(TMatrix[t1][t2], i2))
-                   {
-                       i2++;
-                   }
-                       AMarix[i2].Name = Matrix[t1][t2];
-                   
-                   
-                   
-                   
-               }
-                       
-           }
-            public void Razbor()
-           {
-               for (int i = 0; i < Matrix.Length; i++)
-               {
-                   for (int j = 0; j < Matrix[i].Length; j++)
-                   {
-                       Razbor2(i,j);
-                   }
-               }
-                  
-
-           }
-        }
-        public class Grafic
-        {
-            public Translate nex =new Translate();
-            public void Start()
-            {
-                nex.zap();
-                nex.Razbor();
-            }
-                 
-
-        }
-        public class Graf
-        {
-
-
-
-        }
-        private void открытьToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            Translate t = new Translate();
-            Stream myStream = null;
-            OpenFileDialog openFileDialog1 = new OpenFileDialog();
-            openFileDialog1.Filter = "Вершины графа (*.txt)|*.txt|All files (*.*)|*.*";
-            
-
-
-            if (openFileDialog1.ShowDialog() == DialogResult.OK)
+            public int N = 0;
+            public int N2 = 0;
+            public char[] Matrix = new char[100];
+            public char[] TMatrix = new char[100];
+            public adjacency_matrix[] AMarix = new adjacency_matrix[12];
+            public int Temp=0;
+            public void StringToInt(string[] s)
             {
                 try
                 {
-                    if ((myStream = openFileDialog1.OpenFile()) != null)
+                    for (; N < s.Length; N++)
                     {
-                        using (myStream)
-                        {
-                            StreamReader file = new StreamReader(openFileDialog1.FileName);
-                            while (!file.EndOfStream) 
-                            {
-                                t.StringToInt(file.ReadLine().Split(' '));
-                            }
-                            file.Close();
-
-                        }
+                        Matrix[N] = Convert.ToChar(s[N]);
+                        TMatrix[N]=Convert.ToChar(s[N]);
                     }
+
                 }
                 catch (Exception ex)
                 {
                     MessageBox.Show("Error: Could not read file from disk. Original error: " + ex.Message);
+                    // return;
                 }
+                
+            }
+            public void Smeshnot()
+            {
+                for (int i=0; i<N; i++)
+                {
+                    Temp = -1;
+                    if (Matrix[i] != '!')
+                    {
+                        for (int j = 0; j < N; j++)
+                        {
+                            if (Matrix[i] == Matrix[j] && i != j && Matrix[j] != '!')
+                            {
+                                AMarix[N2].Nambers++;
+                                Temp = j;
+                                
+                            }
+                        }
+                        if (Temp != -1)
+                        {
+                            AMarix[N2].Name = Matrix[Temp];
+                            Matrix[Temp] = '!';
+                        }
+                        else AMarix[N2].Name = Matrix[i];
+                        N2++;
+                    }
+                    else continue;
+                }
+
             }
         }
-
-        private void listView1_SelectedIndexChanged(object sender, EventArgs e)
+        Translate t = new Translate();
+        private void openToolStripMenuItem_Click(object sender, EventArgs e)
         {
 
+            
+            Stream myStream = null;
+            OpenFileDialog openFileDialog1 = new OpenFileDialog();
+            openFileDialog1.Filter = "Вершины графа (*.txt)|*.txt|All files (*.*)|*.*";
+
+
+
+            if (openFileDialog1.ShowDialog() == DialogResult.OK)
+            {
+
+                if ((myStream = openFileDialog1.OpenFile()) != null)
+                {
+                    using (myStream)
+                    {
+                        StreamReader file = new StreamReader(openFileDialog1.FileName);
+                        while (!file.EndOfStream)
+                        {
+                            t.StringToInt(file.ReadLine().Split(' '));
+                        }
+                        file.Close();
+
+                    }
+                }
+            }
+            for (int i = 0; i < t.N; i++)
+            {
+                listBox1.Items.Add(t.Matrix[i]);
+            }
+            
         }
 
-        private void pictureBox1_Click(object sender, EventArgs e)
-        {
 
+
+        private void button1_Click(object sender, EventArgs e)
+        { 
+        
         }
         public double Radians(double angle)
         {
@@ -176,52 +129,87 @@ namespace WindowsFormsApplication1
         }
         public int Ze(int n)
         {
-            return Convert.ToInt32(360/n);
+            return Convert.ToInt32(360 / n);
         }
-        public bool Ysl()
-        {
+        public void LineGraf()
+        {int w=0,v=0;
+            for (int j = 0; j < t.N ; j++)
+            {
+                for (int jj = 0; jj < t.N2 ; jj++)
+            {
+                if (t.TMatrix[j] == t.AMarix[jj].Name) { w = jj; break;}
+                
+            }
+                for (int jj = 0; jj < t.N2 ; jj++)
+                {
+                    if (t.TMatrix[j+1] == t.AMarix[jj].Name) { v = jj; break; }
 
-            return true;
+                }
+                k.DrawLine(Pens.Red, t.AMarix[w].x, t.AMarix[w].y, t.AMarix[v].x, t.AMarix[v].y);
+                
+            }
         }
-        public void relations()
+        //     k.DrawLine(Pens.Red, t.AMarix[j].x, t.AMarix[j].y, t.AMarix[j + 1].x, t.AMarix[j + 1].y);
+        public void Draws()
         {
-           
-
-            return;
-        }
-        private void pictureBox1_Paint(object sender, PaintEventArgs e)
-        {
-            int k = 5;
+             mbit = new Bitmap(pictureBox1.Width, pictureBox1.Height);
+            k = Graphics.FromImage(mbit);
+           // k.DrawLine(Pens.Black, 0,10,2,11);
             int i = 0;
             int r = 70;// *Convert.ToInt32(k / 50);
             int sh = 70;
-            int k1 = Ze(k);
-            int[,] MatrixXY = new int[k,2];
-            Graphics g = e.Graphics;
-            String drawString = "G";
+            int k1 = Ze(t.N2);
+            int[,] MatrixXY = new int[t.N2, 2];
+            
+            String drawString;
 
             // Create font and brush.
             Font drawFont = new Font("Arial", 14);
             SolidBrush drawBrush = new SolidBrush(Color.Black);
-
-            for (int j = 0; j < k; j++)
+            for (int j = 0; j < t.N2; j++)
             {
-             
-                 MatrixXY[j,0] = sh + Convert.ToInt32(r * Math.Cos(Radians(i)));
-                 MatrixXY[j,1] = sh + Convert.ToInt32(r * Math.Sin(Radians(i)));
-                 e.Graphics.DrawEllipse(Pens.Black, MatrixXY[j, 0], MatrixXY[j, 1], 20, 20);
-                 e.Graphics.DrawString(drawString, drawFont, drawBrush, MatrixXY[j, 0]+3, MatrixXY[j, 1]-2);
-                 i += k1;
+
+                MatrixXY[j, 0] = sh + Convert.ToInt32(r * Math.Cos(Radians(i)));
+                MatrixXY[j, 1] = sh + Convert.ToInt32(r * Math.Sin(Radians(i)));
+                t.AMarix[j].x = MatrixXY[j, 0]+10;
+                t.AMarix[j].y = MatrixXY[j, 1]+10;
+                drawString = t.AMarix[j].Name.ToString();
+              
+                k.DrawEllipse(Pens.Black, MatrixXY[j, 0], MatrixXY[j, 1], 20, 20);
+                k.DrawString(drawString, drawFont, drawBrush, MatrixXY[j, 0] + 3, MatrixXY[j, 1] - 2);
+                i += k1;
             }
+
+                LineGraf();
+           
+            pictureBox1.Image = mbit;
+        }
+        private void button1_Click_1(object sender, EventArgs e)
+        {
+            t.Smeshnot();
+            for (int i=0;i<t.N2;i++)
+            {
+                listBox2.Items.Add(t.AMarix[i].Name+"   ("+  t.AMarix[i].Nambers.ToString() +")");
+            }
+
+           
+            Draws();
+        }
+
+        private void pictureBox1_Click(object sender, EventArgs e)
+        {
+        
+        }
+
+        private void pictureBox1_Paint(object sender, PaintEventArgs e)
+        {
+
             
         }
 
-
-        private void button1_Click(object sender, EventArgs e)
+        private void выходToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Grafic r = new Grafic();
-            r.Start();
-           // listBox1.Items.Add(r.nex.Matrix[0].ToString());
+            Close();
         }
     }
 }
